@@ -29,34 +29,77 @@ document.getElementById("set-einsatz-button").addEventListener("click", function
         alert("Bitte gib einen gültigen Einsatz ein, der nicht höher als dein Guthaben ist.");
     }
 });
+// Funktion, um die Symbole während des Ratterns zu variieren
+function startRattern(symbolElements, spinResults) {
+    const symbols = ["kirsche.png", "zitrone.png", "glocke.png", "sieben.png", "stern.png", "bar.png"];
+    let intervalId = [];
 
+    // Zeige das "Rattern", indem wir die Symbole regelmäßig ändern
+    symbolElements.forEach((symbol, index) => {
+        let currentIndex = 0;
+        let interval = setInterval(() => {
+            // Zufälliges Symbol setzen
+            const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+            symbol.src = `images/${randomSymbol}`;
+
+            currentIndex++;
+
+            // Wenn die maximale Anzahl an "Ratterns" erreicht ist, stoppen
+            if (currentIndex >= 50) {  // Du kannst hier die Anzahl der Ratter-Wiederholungen anpassen
+                clearInterval(interval);
+                symbol.src = `images/${spinResults[index]}`; // Das finale Symbol anzeigen
+            }
+        }, 50);  // Alle 100ms ein neues zufälliges Symbol anzeigen
+        intervalId.push(interval);
+    });
+}
 // Schritt 3: Walzen drehen und prüfen
-// Schritt 3: Walzen drehen und prüfen
-document.getElementById("start-button").addEventListener("click", function() {
+document.getElementById("start-button").addEventListener("click", function () {
     const spinResults = spinReels(); // Drehe die Walzen
-    displaySpinResults(spinResults); // Zeige die Walzen-Ergebnisse an
-
-    const symbols = document.querySelectorAll(".symbol"); // Alle Symbole auswählen
+    const symbolElements = document.querySelectorAll(".symbol"); // Alle Symbole auswählen
     let maxDelay = 0; // Maximale Verzögerung für das Stoppen der Drehung
 
-    // Start der Drehung der Symbole
-    symbols.forEach((symbol, index) => {
-        symbol.style.animation = "drehen 1s linear infinite"; // Start der Drehung
+    const delayTimes = [500, 1500, 2500, 4000, 5000, 6000, 7500, 8500, 9500]; // Verzögerungen für jedes Symbol
 
-        // Verzögerung für jedes Symbol, damit sie nacheinander stoppen
-        const delay = (index + 1) * 300; // Verzögerung für jedes Symbol (300ms pro Symbol)
-        maxDelay = Math.max(maxDelay, delay); // Berechne die maximale Verzögerung
-
-        // Symbol nach der Verzögerung stoppen
+    const stopSymbol = (index, delay) => {
         setTimeout(() => {
-            symbol.style.animation = "none"; // Stoppt die Drehung
+            symbolElements[index].style.animation = "none"; // Stoppt die Animation
+            symbolElements[index].src = `images/${spinResults[index]}`; // Setze das endgültige Symbol
         }, delay);
+    };
+
+    // Drehe die Spalten von links nach rechts
+    const spalten = [
+        [0, 1, 2], // Erste Spalte (links)
+        [3, 4, 5], // Zweite Spalte (mitte)
+        [6, 7, 8]  // Dritte Spalte (rechts)
+    ];
+
+    // Zuerst alle Symbole der linken Spalte animieren
+    spalten[0].forEach((symbolIndex, i) => {
+        symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
+        stopSymbol(symbolIndex, delayTimes[i]);
+        maxDelay = Math.max(maxDelay, delayTimes[i]);
+    });
+
+    // Dann alle Symbole der mittleren Spalte animieren
+    spalten[1].forEach((symbolIndex, i) => {
+        symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
+        stopSymbol(symbolIndex, delayTimes[i + 3]); // Verzögerung nach der ersten Spalte
+        maxDelay = Math.max(maxDelay, delayTimes[i + 3]);
+    });
+
+    // Zuletzt alle Symbole der rechten Spalte animieren
+    spalten[2].forEach((symbolIndex, i) => {
+        symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
+        stopSymbol(symbolIndex, delayTimes[i + 6]); // Verzögerung nach der zweiten Spalte
+        maxDelay = Math.max(maxDelay, delayTimes[i + 6]);
     });
 
     // Berechne den Gewinn
-    const gewinn = checkWin(spinResults); 
+    const gewinn = checkWin(spinResults);
 
-    // Setze eine Verzögerung, um den Gewinntext erst nach dem Stoppen aller Symbole anzuzeigen
+    // Zeige den Gewinntext erst nach dem Stoppen aller Symbole
     setTimeout(() => {
         if (gewinn > 0) {
             guthaben += gewinn; // Füge den Gewinn zum Guthaben hinzu
@@ -66,17 +109,26 @@ document.getElementById("start-button").addEventListener("click", function() {
             document.getElementById("gewinntext").textContent = "Leider kein Gewinn.";
         }
 
-        updateGuthaben(); // Aktualisiere das angezeigte Guthaben
+        updateGuthaben(); // Aktualisiere das Guthaben
 
         // Überprüfe, ob das Guthaben auf null ist
         if (guthaben <= 0) {
-            askForMoreGuthaben(); // Frage, ob der Spieler mehr Guthaben einzahlen möchte
+            askForMoreGuthaben(); // Frage nach neuem Guthaben
         }
-    }, maxDelay + 500); // Verzögere die Anzeige des Gewinntexts um die maximale Verzögerung + 500ms
+    }, maxDelay + 500); // Warte bis die maximale Verzögerung plus 500ms nach dem letzten Symbol
 });
 // Funktion zum Drehen der Walzen
 function spinReels() {
     const symbols = ["kirsche.png", "zitrone.png", "glocke.png", "sieben.png", "stern.png", "bar.png"];
+
+    constweightedSymbols = [
+    "kirsche.png", "kirsche.png","kirsche.png",
+    "zitrone.png","zitrone.png",
+    "glocke.png",
+    "sieben.png",
+    "stern.png",
+    "bar.png",
+    ];
     const spinResults = [];
     for (let i = 0; i < 9; i++) {
         const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
@@ -85,41 +137,26 @@ function spinReels() {
     return spinResults;
 }
 
-// Funktion, um das Layout der Walzen anzuzeigen
+// Funktion zur Anzeige der Symbole
 function displaySpinResults(results) {
-    // Stelle sicher, dass das Bild neu geladen wird, indem wir den `src` jedes Bildes aktualisieren
-    document.getElementById('symbol1').src = 'images/' + results[0];
-    document.getElementById('symbol2').src = 'images/' + results[1];
-    document.getElementById('symbol3').src = 'images/' + results[2];
-    document.getElementById('symbol4').src = 'images/' + results[3];
-    document.getElementById('symbol5').src = 'images/' + results[4];
-    document.getElementById('symbol6').src = 'images/' + results[5];
-    document.getElementById('symbol7').src = 'images/' + results[6];
-    document.getElementById('symbol8').src = 'images/' + results[7];
-    document.getElementById('symbol9').src = 'images/' + results[8];
+    for (let i = 0; i < results.length; i++) {
+        document.getElementById(`symbol${i + 1}`).src = `images/${results[i]}`;
+    }
 }
 
 // Funktion zur Berechnung des Gewinns
 function checkWin(results) {
-    // Gewinnlinien (basierend auf einem 3x3 Layout)
     const GEWINN_LINIEN = [
-        [0, 1, 2],  // Horizontale Linie oben
-        [3, 4, 5],  // Horizontale Linie Mitte
-        [6, 7, 8],  // Horizontale Linie unten
-        [0, 3, 6],  // Vertikale Linie links
-        [1, 4, 7],  // Vertikale Linie Mitte
-        [2, 5, 8],  // Vertikale Linie rechts
-        [0, 4, 8],  // Diagonale von oben links nach unten rechts
-        [2, 4, 6]   // Diagonale von oben rechts nach unten links
+        [0, 3, 6],
+        [1, 4, 7],  // Horizontale Linie Mitte
+        [2, 5, 8],
     ];
 
-    // Gewinnberechnung
     let gewinn = 0;
     for (let linie of GEWINN_LINIEN) {
-        const symbol = results[linie[0]]; // Wähle das erste Symbol in der Reihe
+        const symbol = results[linie[0]];
         let istGewinn = true;
 
-        // Prüfe, ob alle Symbole auf dieser Linie gleich sind
         for (let i of linie) {
             if (results[i] !== symbol) {
                 istGewinn = false;
@@ -127,10 +164,9 @@ function checkWin(results) {
             }
         }
 
-        // Wenn alle Symbole gleich sind, berechne den Gewinn basierend auf dem Symbol
         if (istGewinn) {
             const symbolWert = getSymbolValue(symbol);
-            gewinn += einsatz * symbolWert; // Beispiel: Gewinn multipliziert mit Einsatz
+            gewinn += einsatz * symbolWert;
         }
     }
     return gewinn;
@@ -146,7 +182,7 @@ function getSymbolValue(symbol) {
         "stern.png": 10,
         "bar.png": 20
     };
-    return symbolWerte[symbol] || 0; // Rückgabe des entsprechenden Werts oder 0, falls das Symbol nicht gefunden wird
+    return symbolWerte[symbol] || 0;
 }
 
 // Guthaben aktualisieren
@@ -162,7 +198,7 @@ function askForMoreGuthaben() {
         if (neuerGuthaben && neuerGuthaben > 0) {
             guthaben = parseInt(neuerGuthaben);
             document.getElementById("guthaben-amount").textContent = guthaben;
-            document.getElementById("guthaben-anzeige").style.display = "block"; // Zeige das Guthaben wieder an
+            document.getElementById("guthaben-anzeige").style.display = "block";
         } else {
             alert("Ungültiger Betrag.");
         }
