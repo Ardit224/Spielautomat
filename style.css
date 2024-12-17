@@ -19,23 +19,24 @@ h1 {
 .container {
     text-align: center;
     background-color: #fff;
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    width: 400px;
+    padding: 3vh 2vw;
+    border-radius: 1vw;
+    box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.1);
+    width: 60vw;
+    height: auto;
+    max-height: 90vh;
     position: relative; /* Um die Position des Start-Buttons und Guthabens zu steuern */
 }
 
 #slot-machine {
     background-image: url("images/spielautomat.png");
-    background-size: 100%;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    width: 100%;
-    height: 160px;
-    margin-top: -20px;
-    position: relative;
-    border-radius: 10px;
+    width: 90%;
+    height: 50vh;
+    margin: 2vh auto;
+    border-radius: 1vw;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,11 +46,11 @@ h1 {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 Symbole in jeder Reihe */
     grid-template-rows: repeat(3, 1fr);  /* 3 Reihen (vertikal) */
-    gap: 10px;
+    gap: 1vh;
     width: 30%;
     margin-top: -20px;
-    padding-top: 20px;
-    padding-left: 22px;
+    padding-top: 15vh;
+    padding-left: 2vh;
 }
 
 .slot {
@@ -59,10 +60,10 @@ h1 {
 }
 
 .symbol {
-    width: 25px;
-    height: 30px;
+    width: 5vh;
+    height: 6vh;
     object-fit: cover;
-    margin: 3px ;
+    margin: 0.5vh ;
     animation: drehen 1s linear infinite; /* Endlose Animation für die Drehung */
 }
 
@@ -87,27 +88,26 @@ button {
 }
 
 #guthaben-container {
-    margin-bottom: 15px;
+    margin-bottom: 3vh;
 }
 
 #gewinntext {
     font-family: cursive;
-    font-size: 15px;
+    font-size: 2vh;
     font-weight: bold;
-    margin-top: 10px;
     position: absolute;
-    left: 10px; /* Gewinntext links */
-    bottom:60px; /* Abstand vom unteren Rand */
+    left: 2vh; /* Gewinntext links */
+    bottom:5vh; /* Abstand vom unteren Rand */
 }
 
 #guthaben-anzeige {
     font-family: fantasy;
     color: rgba(18, 2, 245, 0.938);
-    font-size: 15px;
+    font-size: 2vh;
     font-weight: bold;
     position: absolute;
-    left: 10px; /* Guthaben links */
-    bottom: 20px; /* Abstand vom unteren Rand */
+    left: 2vh; /* Guthaben links */
+    bottom: 2vh; /* Abstand vom unteren Rand */
 }
 
 input[type="number"] {
@@ -123,26 +123,26 @@ input[type="number"] {
 #start-button {
     background: none;
     border: none;
-    display: inline-block;
     position: absolute;
-    right:-10px;/* Start-Button unten rechts */
-    bottom: -60px;
+    right: 3vh;/* Start-Button unten rechts */
+    bottom: 3vh;
     padding: 0;
 }
 #start-button img {
-    width: 70px;
-    height: 50px;
+    width: 7vw;
+    height: auto;
 }
 
 #start-music {
-    padding: 5px 10px;  /* Größe des Buttons */
-    font-size: 15px;  /* Schriftgröße */
+    padding: 0.5vh 1vw;  /* Größe des Buttons */
+    font-size: 1.5vw;  /* Schriftgröße */
     background-color: #4CAF50;  /* Hintergrundfarbe */
     color: white;  /* Textfarbe */
     border: none;  /* Kein Rand */
-    border-radius: 3px;  /* Abgerundete Ecken */
+    border-radius: 1vw;  /* Abgerundete Ecken */
     cursor: pointer;  /* Mauszeiger als Hand */
-    transition: background-color 0.3s;  /* Sanfte Übergänge bei Hover */
+    right: 2vw;
+    top: 2vh;
 }
 
 /* Hover-Effekt für den Button */
@@ -152,11 +152,12 @@ input[type="number"] {
 
 /* Lautstärkeregler */
 #volume {
-    width: 10%;  /* Volle Breite des Containers */
+    width: 15vw;  /* Volle Breite des Containers */
     margin-top: 0px;  /* Abstand zum vorherigen Element */
     margin-bottom: 0px;  /* Abstand zum nächsten Element */
-    height: 5px;  /* Höhe des Reglers */
+    height: 1vh;  /* Höhe des Reglers */
     cursor: pointer;  /* Mauszeiger als Hand */
+    margin: 1vh 0;
 }
 
 /* Container für den Lautstärkeregler und Button */
@@ -164,7 +165,7 @@ input[type="number"] {
     text-align: center;  /* Zentriert den Inhalt */
     margin-top: 0px;  /* Abstand nach oben */
     width: 20%;
-    height: 300px;
+    height: 70vh;
 }
 
 /* Optional: Lautstärke Text */
