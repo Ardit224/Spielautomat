@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spielautomat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Button zum Starten der Musik -->
+    <button id="start-music" onclick="playMusic()">Starte Musik</button>
+
+    <!-- Hintergrundmusik -->
+    <audio id="background-music">
+        <source src="music/casino_musik.mp3" type="audio/mp3">
+        Dein Browser unterstützt das Audio-Tag nicht.
+    </audio>  
+
+    <!-- Lautstärkeregler -->
+    <label for="volume">Lautstärke:</label>
+    <input type="range" id="volume" min="0" max="1" step="0.1" value="1" onchange="setVolume(this.value)">
+
+    <div class="container">
+        <h1>Verzock dein Geld!</h1>
+
+        <!-- Eingabefeld für Startguthaben -->
+        <div id="guthaben-container">
+            <label for="startguthaben">Gib dein Startguthaben ein:</label>
+            <input type="number" id="startguthaben" placeholder="Startguthaben" min="1">
+            <button id="set-guthaben-button">Startguthaben setzen</button>
+        </div>
+
+        <!-- Eingabefeld für Einsatz -->
+        <div id="einsatz-container" style="display: none;">
+            <label for="einsatz">Setze deinen Einsatz:</label>
+            <input type="number" id="einsatzInput" placeholder="Einsatz" min="1">
+            <button id="set-einsatz-button">Einsatz setzen</button>
+        </div>
+
+        <!-- Slot Machine Container mit Fernseherhintergrund -->
+        <div id="slot-machine" class="slot-machine" style="display: none;">
+            <div id="symbols" class="symbols">
+                <!-- 3x3 Walzenfeld -->
+                <div class="slot">
+                    <img src="images/kirsche.png" alt="Kirsche" class="symbol" id="symbol1">
+                    <img src="images/zitrone.png" alt="Zitrone" class="symbol" id="symbol2">
+                    <img src="images/sieben.png" alt="Sieben" class="symbol" id="symbol3">
+                </div>
+                <div class="slot">
+                    <img src="images/glocke.png" alt="Glocke" class="symbol" id="symbol4">
+                    <img src="images/stern.png" alt="Stern" class="symbol" id="symbol5">
+                    <img src="images/bar.png" alt="BAR" class="symbol" id="symbol6">
+                </div>
+                <div class="slot">
+                    <img src="images/kirsche.png" alt="Kirsche" class="symbol" id="symbol7">
+                    <img src="images/zitrone.png" alt="Zitrone" class="symbol" id="symbol8">
+                    <img src="images/sieben.png" alt="Sieben" class="symbol" id="symbol9">
+                </div>
+            </div>
+            <button id="start-button">
+                <img src="images/start_button.png" alt="Start" id="start-button-img">
+            </button>
+        </div>
+
+        <!-- Gewinntext (zu Beginn verstecken) -->
+        <div id="gewinntext" style="display: none;"></div>
+
+        <!-- Aktuelles Guthaben (zu Beginn verstecken) -->
+        <div id="guthaben-anzeige" style="display: none;">
+            <p>Guthaben: <span id="guthaben-amount">0</span> €</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <script>
+        // Funktion zum Abspielen der Musik
+        function playMusic() {
+            var audio = document.getElementById('background-music');
+            audio.play(); // Musik starten
+        }
+
+        // Funktion zur Lautstärkeregulierung
+        function setVolume(value) {
+            var audio = document.getElementById('background-music');
+            audio.volume = value; // Lautstärke auf den angegebenen Wert setzen
+        }
+    </script>
+</body>
+</html>
