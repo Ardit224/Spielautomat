@@ -8,18 +8,22 @@
 </head>
 <body>
     
+    <!-- Musiksteuerung Container -->
+<!-- Musiksteuerung Container -->
+<div id="music-container">
     <!-- Button zum Starten der Musik -->
     <button id="start-music" onclick="playMusic()">Starte Musik</button>
-
-    <!-- Hintergrundmusik -->
-    <audio id="background-music">
-        <source src="music/casino_musik.mp3" type="audio/mp3">
-        Dein Browser unterstützt das Audio-Tag nicht.
-    </audio>  
 
     <!-- Lautstärkeregler -->
     <label for="volume">Lautstärke:</label>
     <input type="range" id="volume" min="0" max="1" step="0.1" value="1" onchange="setVolume(this.value)">
+</div>
+
+<!-- Hintergrundmusik -->
+<audio id="background-music">
+    <source src="music/casino_musik.mp3" type="audio/mp3">
+    Dein Browser unterstützt das Audio-Tag nicht.
+</audio>
 
     <div class="container">
         <h1>Verzock dein Geld!</h1>
@@ -37,6 +41,9 @@
             <input type="number" id="einsatzInput" placeholder="Einsatz" min="1">
             <button id="set-einsatz-button">Einsatz setzen</button>
         </div>
+        
+        <!-- Einsatz ändern Button, zu Beginn versteckt -->
+        <button id="einsatz-button" style="display: none;" onclick="changeEinsatz()">Einsatz ändern</button>
 
         <!-- Slot Machine Container mit Fernseherhintergrund -->
         <div id="slot-machine" class="slot-machine" style="display: none;">
@@ -75,6 +82,43 @@
     <script src="script.js"></script>
 
     <script>
+        // Initialisierung der Variablen
+        let guthaben = 0;
+        let einsatz = 0;
+
+        // Funktion, um das Guthaben zu setzen und den "Einsatz setzen"-Button anzuzeigen
+        document.getElementById('set-guthaben-button').addEventListener('click', function() {
+            guthaben = parseInt(document.getElementById('startguthaben').value);
+            document.getElementById('guthaben-amount').textContent = guthaben;
+            document.getElementById('guthaben-anzeige').style.display = 'block';
+            
+            // Anzeigen des Einsatz-Containers
+            document.getElementById('einsatz-container').style.display = 'block';
+        });
+
+        // Funktion, um den Einsatz zu setzen und den "Einsatz ändern"-Button anzuzeigen
+        document.getElementById('set-einsatz-button').addEventListener('click', function() {
+            einsatz = parseInt(document.getElementById('einsatzInput').value);
+            
+            // Überprüfen, ob der Einsatz größer als das Guthaben ist
+            if (einsatz > guthaben) {
+                alert('Einsatz kann nicht größer als das Guthaben sein!');
+                return;
+            }
+            
+            // Button für "Einsatz ändern" anzeigen
+            document.getElementById('einsatz-button').style.display = 'block';
+            document.getElementById('slot-machine').style.display = 'block';
+            document.getElementById('einsatz-container').style.display = 'none';
+        });
+
+        // Funktion, um den Einsatz zu ändern
+        function changeEinsatz() {
+            // Wieder den Einsatz-Container anzeigen und den Button verbergen
+            document.getElementById('einsatz-container').style.display = 'block';
+            document.getElementById('einsatz-button').style.display = 'none';
+        }
+
         // Funktion zum Abspielen der Musik
         function playMusic() {
             var audio = document.getElementById('background-music');
@@ -89,3 +133,4 @@
     </script>
 </body>
 </html>
+
