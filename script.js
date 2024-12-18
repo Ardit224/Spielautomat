@@ -2,6 +2,11 @@ let guthaben = 0; // Aktuelles Guthaben
 let einsatz = 0; // Einsatz des Spielers
 let startguthaben = 0; // Startguthaben, das nur beim ersten Setzen verwendet wird
 
+function playMusic() {
+    var audio = document.getElementById("background-music");
+    audio.play(); // Musik starten
+}
+
 // Schritt 1: Startguthaben setzen
 document.getElementById("set-guthaben-button").addEventListener("click", function() {
     const startGuthabenInput = document.getElementById("startguthaben").value;
@@ -25,109 +30,98 @@ document.getElementById("set-einsatz-button").addEventListener("click", function
         document.getElementById("slot-machine").style.display = "block"; // Zeige das 3x3 Feld
         document.getElementById("guthaben-anzeige").style.display = "block"; // Zeige das Guthaben
         document.getElementById("gewinntext").style.display = "block"; // Zeige den Gewinntext
+
+        // Einsatz-Button erst sichtbar machen, wenn der Einsatz korrekt gesetzt wurde
+        document.getElementById("einsatz-button").style.display = "block"; // Einsatz-Button sichtbar machen
     } else {
         alert("Bitte gib einen gültigen Einsatz ein, der nicht höher als dein Guthaben ist.");
     }
 });
-// Funktion, um die Symbole während des Ratterns zu variieren
-function startRattern(symbolElements, spinResults) {
-    const symbols = ["kirsche.png", "zitrone.png", "glocke.png", "sieben.png", "stern.png", "bar.png"];
-    let intervalId = [];
 
-    // Zeige das "Rattern", indem wir die Symbole regelmäßig ändern
-    symbolElements.forEach((symbol, index) => {
-        let currentIndex = 0;
-        let interval = setInterval(() => {
-            // Zufälliges Symbol setzen
-            const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-            symbol.src = `images/${randomSymbol}`;
-
-            currentIndex++;
-
-            // Wenn die maximale Anzahl an "Ratterns" erreicht ist, stoppen
-            if (currentIndex >= 50) {  // Du kannst hier die Anzahl der Ratter-Wiederholungen anpassen
-                clearInterval(interval);
-                symbol.src = `images/${spinResults[index]}`; // Das finale Symbol anzeigen
-            }
-        }, 50);  // Alle 100ms ein neues zufälliges Symbol anzeigen
-        intervalId.push(interval);
-    });
-}
 // Schritt 3: Walzen drehen und prüfen
 document.getElementById("start-button").addEventListener("click", function () {
-    const spinResults = spinReels(); // Drehe die Walzen
-    const symbolElements = document.querySelectorAll(".symbol"); // Alle Symbole auswählen
-    let maxDelay = 0; // Maximale Verzögerung für das Stoppen der Drehung
+    // Sobald der Start-Button gedrückt wird, aktivieren wir den Einsatz-Button
+    document.getElementById("einsatz-button").style.display = "block"; // Einsatz-Button sichtbar machen
 
-    const delayTimes = [500, 1500, 2500, 4000, 5000, 6000, 7500, 8500, 9500]; // Verzögerungen für jedes Symbol
+    // Wenn der Einsatz bereits gesetzt ist, starten wir das Spiel
+    if (einsatz > 0 && einsatz <= guthaben) {
+        const spinResults = spinReels(); // Drehe die Walzen
+        const symbolElements = document.querySelectorAll(".symbol"); // Alle Symbole auswählen
+        let maxDelay = 0; // Maximale Verzögerung für das Stoppen der Drehung
 
-    const stopSymbol = (index, delay) => {
+        const delayTimes = [500, 1500, 2500, 4000, 5000, 6000, 7500, 8500, 9500]; // Verzögerungen für jedes Symbol
+
+        const stopSymbol = (index, delay) => {
+            setTimeout(() => {
+                symbolElements[index].style.animation = "none"; // Stoppt die Animation
+                symbolElements[index].src = `images/${spinResults[index]}`; // Setze das endgültige Symbol
+            }, delay);
+        };
+
+        // Drehe die Spalten von links nach rechts
+        const spalten = [
+            [0, 1, 2], // Erste Spalte (links)
+            [3, 4, 5], // Zweite Spalte (mitte)
+            [6, 7, 8]  // Dritte Spalte (rechts)
+        ];
+
+        // Zuerst alle Symbole der linken Spalte animieren
+        spalten[0].forEach((symbolIndex, i) => {
+            symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
+            stopSymbol(symbolIndex, delayTimes[i]);
+            maxDelay = Math.max(maxDelay, delayTimes[i]);
+        });
+
+        // Dann alle Symbole der mittleren Spalte animieren
+        spalten[1].forEach((symbolIndex, i) => {
+            symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
+            stopSymbol(symbolIndex, delayTimes[i + 3]); // Verzögerung nach der ersten Spalte
+            maxDelay = Math.max(maxDelay, delayTimes[i + 3]);
+        });
+
+        // Zuletzt alle Symbole der rechten Spalte animieren
+        spalten[2].forEach((symbolIndex, i) => {
+            symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
+            stopSymbol(symbolIndex, delayTimes[i + 6]); // Verzögerung nach der zweiten Spalte
+            maxDelay = Math.max(maxDelay, delayTimes[i + 6]);
+        });
+
+        // Berechne den Gewinn
+        const gewinn = checkWin(spinResults);
+
+        // Zeige den Gewinntext erst nach dem Stoppen aller Symbole
         setTimeout(() => {
-            symbolElements[index].style.animation = "none"; // Stoppt die Animation
-            symbolElements[index].src = `images/${spinResults[index]}`; // Setze das endgültige Symbol
-        }, delay);
-    };
+            if (gewinn > 0) {
+                guthaben += gewinn; // Füge den Gewinn zum Guthaben hinzu
+                document.getElementById("gewinntext").textContent = `Du hast ${gewinn} Münzen gewonnen!`;
+            } else {
+                guthaben -= einsatz; // Ziehe den Einsatz ab, wenn der Spieler verloren hat
+                document.getElementById("gewinntext").textContent = "Leider kein Gewinn.";
+            }
 
-    // Drehe die Spalten von links nach rechts
-    const spalten = [
-        [0, 1, 2], // Erste Spalte (links)
-        [3, 4, 5], // Zweite Spalte (mitte)
-        [6, 7, 8]  // Dritte Spalte (rechts)
-    ];
+            updateGuthaben(); // Aktualisiere das Guthaben
 
-    // Zuerst alle Symbole der linken Spalte animieren
-    spalten[0].forEach((symbolIndex, i) => {
-        symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
-        stopSymbol(symbolIndex, delayTimes[i]);
-        maxDelay = Math.max(maxDelay, delayTimes[i]);
-    });
-
-    // Dann alle Symbole der mittleren Spalte animieren
-    spalten[1].forEach((symbolIndex, i) => {
-        symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
-        stopSymbol(symbolIndex, delayTimes[i + 3]); // Verzögerung nach der ersten Spalte
-        maxDelay = Math.max(maxDelay, delayTimes[i + 3]);
-    });
-
-    // Zuletzt alle Symbole der rechten Spalte animieren
-    spalten[2].forEach((symbolIndex, i) => {
-        symbolElements[symbolIndex].style.animation = "rattern 0.00001s linear infinite";
-        stopSymbol(symbolIndex, delayTimes[i + 6]); // Verzögerung nach der zweiten Spalte
-        maxDelay = Math.max(maxDelay, delayTimes[i + 6]);
-    });
-
-    // Berechne den Gewinn
-    const gewinn = checkWin(spinResults);
-
-    // Zeige den Gewinntext erst nach dem Stoppen aller Symbole
-    setTimeout(() => {
-        if (gewinn > 0) {
-            guthaben += gewinn; // Füge den Gewinn zum Guthaben hinzu
-            document.getElementById("gewinntext").textContent = `Du hast ${gewinn} Münzen gewonnen!`;
-        } else {
-            guthaben -= einsatz; // Ziehe den Einsatz ab, wenn der Spieler verloren hat
-            document.getElementById("gewinntext").textContent = "Leider kein Gewinn.";
-        }
-
-        updateGuthaben(); // Aktualisiere das Guthaben
-
-        // Überprüfe, ob das Guthaben auf null ist
-        if (guthaben <= 0) {
-            askForMoreGuthaben(); // Frage nach neuem Guthaben
-        }
-    }, maxDelay + 500); // Warte bis die maximale Verzögerung plus 500ms nach dem letzten Symbol
+            // Überprüfe, ob das Guthaben auf null ist
+            if (guthaben <= 0) {
+                askForMoreGuthaben(); // Frage nach neuem Guthaben
+            }
+        }, maxDelay + 500); // Warte bis die maximale Verzögerung plus 500ms nach dem letzten Symbol
+    } else {
+        alert("Setze einen gültigen Einsatz, bevor du das Spiel startest.");
+    }
 });
+
 // Funktion zum Drehen der Walzen
 function spinReels() {
     const symbols = ["kirsche.png", "zitrone.png", "glocke.png", "sieben.png", "stern.png", "bar.png"];
 
-    constweightedSymbols = [
-    "kirsche.png", "kirsche.png","kirsche.png",
-    "zitrone.png","zitrone.png",
-    "glocke.png",
-    "sieben.png",
-    "stern.png",
-    "bar.png",
+    const weightedSymbols = [
+        "kirsche.png", "kirsche.png", "kirsche.png",
+        "zitrone.png", "zitrone.png",
+        "glocke.png",
+        "sieben.png",
+        "stern.png",
+        "bar.png",
     ];
     const spinResults = [];
     for (let i = 0; i < 9; i++) {
@@ -135,13 +129,6 @@ function spinReels() {
         spinResults.push(randomSymbol);
     }
     return spinResults;
-}
-
-// Funktion zur Anzeige der Symbole
-function displaySpinResults(results) {
-    for (let i = 0; i < results.length; i++) {
-        document.getElementById(`symbol${i + 1}`).src = `images/${results[i]}`;
-    }
 }
 
 // Funktion zur Berechnung des Gewinns
@@ -171,7 +158,11 @@ function checkWin(results) {
     }
     return gewinn;
 }
-
+function changeEinsatz() {
+    console.log('Einsatz ändern Button wurde geklickt');
+    document.getElementById('einsatz-container').style.display = 'block';
+    document.getElementById('einsatz-button').style.display = 'none';
+}
 // Hilfsfunktion: Berechne den Wert des Symbols
 function getSymbolValue(symbol) {
     const symbolWerte = {
