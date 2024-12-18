@@ -1,4 +1,4 @@
- body {
+body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     display: flex;
@@ -10,7 +10,7 @@
 
 h1 {
     font-family: 'Arial', sans-serif;
-    font-size: 24px; /* Schriftgröße in Pixel */
+    font-size: 24px;
     color: #333;
     text-align: center;
     margin-bottom: 20px;
@@ -34,7 +34,7 @@ h1 {
     background-position: center;
     background-repeat: no-repeat;
     width: 90%;
-    height: 60vh; /* Höhe unverändert */
+    height: 60vh;
     margin: 2vh auto;
     border-radius: 1vw;
     display: flex;
@@ -46,11 +46,11 @@ h1 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 1vh;
+    gap: 0vh;
     width: 30%;
     margin-top: -20px;
-    padding-top: 16vh;
-    padding-left: 3vh;
+    padding-top: 1vh;
+    padding-left: 25vh;
 }
 
 .slot {
@@ -60,10 +60,10 @@ h1 {
 }
 
 .symbol {
-    width: 4.5vh; /* Symbolgröße in vh */
-    height: 6vh; /* Höhe der Symbole */
+    width: 8vh;
+    height: 8vh;
     object-fit: cover;
-    margin: 0.5vh;
+    margin: 4vh;
     animation: rattern 0.0001s linear infinite;
 }
 
@@ -96,7 +96,7 @@ button {
 }
 
 #gewinntext {
-    font-family: cursive;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 2vh;
     font-weight: bold;
     position: absolute;
@@ -105,7 +105,7 @@ button {
 }
 
 #guthaben-anzeige {
-    font-family: fantasy;
+    font-family: Arial, Helvetica, sans-serif;
     color: rgba(18, 2, 245, 0.938);
     font-size: 2vh;
     font-weight: bold;
@@ -122,7 +122,22 @@ input[type="number"] {
     width: 80%;
     text-align: center;
 }
+#einsatz-button {
+    background-color: #12f34a;
+    color: white;
+    border: none;
+    padding: 0vh 1vw;
+    font-size: 3vh;
+    border-radius: 1vw;
+    cursor: pointer;
+    position: absolute;
+    left: 1vh;
+    bottom: 10vh; /* Position über dem Start-Button */
+}
 
+#einsatz-button:hover {
+    background-color: #e67e22;
+}
 #start-button {
     background: none;
     border: none;
@@ -137,6 +152,16 @@ input[type="number"] {
     height: auto;
 }
 
+#music-container {
+    position: absolute;
+    left: 2vw;
+    top: 2vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
 #start-music {
     padding: 0.5vh 1vw;
     font-size: 1.5vw;
@@ -145,8 +170,6 @@ input[type="number"] {
     border: none;
     border-radius: 1vw;
     cursor: pointer;
-    right: 2vw;
-    top: 2vh;
 }
 
 #start-music:hover {
@@ -155,17 +178,9 @@ input[type="number"] {
 
 #volume {
     width: 10vw;
-    height: 2vh;;
+    height: 2vh;
     transform-origin: center center;
     cursor: pointer;
-    
-}
-
-.container {
-    text-align: center;
-    margin-top: 0px;
-    width: 20%;
-    height: 70vh;
 }
 
 label[for="volume"] {
